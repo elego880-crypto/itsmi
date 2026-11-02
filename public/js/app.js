@@ -61,6 +61,7 @@ const App = (() => {
       toast(
         notif.type === 'like' ? `${notif.actor_display_name} лайкнул ваш пост` :
         notif.type === 'comment' ? `${notif.actor_display_name} прокомментировал пост` :
+        notif.type === 'mention' ? `${notif.actor_display_name} упомянул вас` :
         `${notif.actor_display_name} подписался на вас`,
         'success'
       );

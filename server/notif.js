@@ -37,4 +37,16 @@ async function createNotif(userId, actorId, type, postId = null) {
   }
 }
 
-module.exports = { createNotif };
+module.exports = { createNotif, notifyMentions };
+
+async function notifyMentions(text, actorId, postId) {
+  const matches = text.match(/@([a-zA-Z0-9_]+)/g);
+  if (!matches) return;
+  const usernames = [...new Set(matches.map(m => m.slice(1)))];
+  for (const username of usernames) {
+    try {
+      const user = await db.get('SELECT id FROM users WHERE username = $1 AND banned = 0', [username]);
+      if (user) await createNotif(user.id, actorId, 'mention', postId);
+    } catch {}
+  }
+}

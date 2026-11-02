@@ -3,7 +3,7 @@ const { db } = require('../db');
 const { requireAuth } = require('../middleware/auth');
 const { upload, compressToBase64 } = require('../middleware/upload');
 const { broadcast } = require('../ws');
-const { createNotif } = require('../notif');
+const { createNotif, notifyMentions } = require('../notif');
 const xss = require('xss');
 const fs = require('fs');
 
@@ -89,6 +89,7 @@ router.post('/', requireAuth, upload.single('media'), async (req, res) => {
     const post = await db.get('SELECT * FROM posts WHERE id = $1', [result.lastInsertRowid]);
     const enriched = await enrichPost(post, req.user.id);
     broadcast('new_post', enriched);
+    notifyMentions(text, req.user.id, result.lastInsertRowid);
     res.status(201).json(enriched);
   } catch (e) { console.error(e); res.status(500).json({ error: 'Ошибка сервера' }); }
 });
@@ -194,6 +195,7 @@ router.post('/:id/comments', requireAuth, async (req, res) => {
     broadcast('new_comment', { postId: post.id, comment: { ...comment, like_count: 0, liked: false } });
     const postRow = await db.get('SELECT author_id FROM posts WHERE id = $1', [post.id]);
     if (postRow) createNotif(postRow.author_id, req.user.id, 'comment', post.id);
+    notifyMentions(text, req.user.id, post.id);
     res.status(201).json(comment);
   } catch (e) { res.status(500).json({ error: 'Ошибка сервера' }); }
 });
