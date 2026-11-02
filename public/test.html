@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+  <style>
+    body { background: #0a0a0a; color: #fff; font-family: monospace; padding: 20px; }
+    .ok { color: #57f287; }
+    .err { color: #f04747; }
+  </style>
+</head>
+<body>
+  <h2>JS File Test</h2>
+  <div id="log"></div>
+  <script>
+    var log = document.getElementById('log');
+    function addLine(text, ok) {
+      var d = document.createElement('div');
+      d.className = ok ? 'ok' : 'err';
+      d.textContent = text;
+      log.appendChild(d);
+    }
+
+    var scripts = [
+      '/js/api.js',
+      '/js/ws.js',
+      '/js/ui.js',
+      '/js/pages/auth.js',
+      '/js/pages/feed.js',
+      '/js/pages/channels.js',
+      '/js/pages/profile.js',
+      '/js/pages/settings.js',
+      '/js/pages/admin.js',
+      '/js/app.js'
+    ];
+
+    var results = [];
+    var done = 0;
+
+    scripts.forEach(function(src) {
+      fetch(src)
+        .then(function(r) {
+          results.push({ src: src, status: r.status, ok: r.status === 200 });
+        })
+        .catch(function(e) {
+          results.push({ src: src, status: 'FAIL: ' + e.message, ok: false });
+        })
+        .finally(function() {
+          done++;
+          if (done === scripts.length) {
+            results.forEach(function(r) {
+              addLine((r.ok ? '[OK] ' : '[FAIL] ') + r.src + ' — ' + r.status, r.ok);
+            });
+          }
+        });
+    });
+  </script>
+</body>
+</html>

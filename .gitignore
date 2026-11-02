@@ -1,0 +1,8 @@
+node_modules/
+.env
+data/
+public/uploads/*.jpg
+public/uploads/*.png
+public/uploads/*.gif
+public/uploads/*.webp
+*.db

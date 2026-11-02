@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>test2</title>
+</head>
+<body style="background:#0a0a0a;color:#fff;font-family:monospace;padding:20px">
+<div id="out">Запуск...</div>
+<script>
+var out = document.getElementById('out');
+out.innerHTML = 'Step 1: скрипт запустился<br>';
+
+// Проверяем localStorage
+try {
+  localStorage.setItem('t','1');
+  out.innerHTML += 'Step 2: localStorage OK<br>';
+} catch(e) {
+  out.innerHTML += 'Step 2 FAIL: ' + e + '<br>';
+}
+
+// Проверяем fetch к серверу
+out.innerHTML += 'Step 3: пробуем fetch...<br>';
+fetch('/api/auth/login', {
+  method: 'POST',
+  headers: {'Content-Type':'application/json'},
+  body: JSON.stringify({username:'x',password:'x'})
+}).then(function(r) {
+  out.innerHTML += 'Step 3: fetch OK, status=' + r.status + '<br>';
+  out.innerHTML += '<br><span style="color:#57f287">Сервер доступен!</span>';
+}).catch(function(e) {
+  out.innerHTML += 'Step 3 FAIL: ' + e.message + '<br>';
+  out.innerHTML += '<br><span style="color:#f04747">Fetch заблокирован браузером</span>';
+});
+</script>
+</body>
+</html>
