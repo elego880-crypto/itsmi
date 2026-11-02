@@ -1,11 +1,20 @@
 const router = require('express').Router();
 const { db } = require('../db');
 const { requireAuth } = require('../middleware/auth');
-const upload = require('../middleware/upload');
+const { upload, compressToBase64 } = require('../middleware/upload');
 const { broadcast } = require('../ws');
 const { createNotif } = require('../notif');
 const xss = require('xss');
 const fs = require('fs');
+
+async function checkMediaLimit(userId) {
+  const row = await db.get(`
+    SELECT COUNT(*) as c FROM posts
+    WHERE author_id = $1 AND media_url IS NOT NULL AND deleted = 0
+    AND created_at > NOW() - INTERVAL '24 hours'
+  `, [userId]);
+  return parseInt(row.c) < 3;
+}
 
 async function enrichPost(post, currentUserId) {
   const author = await db.get('SELECT id, username, display_name, avatar_url, verified, role FROM users WHERE id = $1', [post.author_id]);
@@ -61,9 +70,16 @@ router.post('/', requireAuth, upload.single('media'), async (req, res) => {
 
     let mediaUrl = null;
     if (req.file) {
-      const buf = fs.readFileSync(req.file.path);
-      mediaUrl = `data:${req.file.mimetype};base64,${buf.toString('base64')}`;
-      fs.unlinkSync(req.file.path);
+      const allowed = await checkMediaLimit(req.user.id);
+      if (!allowed) {
+        fs.unlinkSync(req.file.path);
+        return res.status(429).json({ error: 'Лимит изображений: максимум 3 в день' });
+      }
+      try {
+        mediaUrl = await compressToBase64(req.file.path, req.file.mimetype);
+      } finally {
+        if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+      }
     }
 
     const result = await db.run(

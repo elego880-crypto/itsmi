@@ -85,4 +85,36 @@ router.post('/channels/:id/verify', requireAdmin, async (req, res) => {
   } catch (e) { res.status(500).json({ error: 'Ошибка сервера' }); }
 });
 
+// GET /api/admin/stats — статистика БД
+router.get('/stats', requireAdmin, async (req, res) => {
+  try {
+    const userCount = await db.get('SELECT COUNT(*) as c FROM users');
+    const postCount = await db.get('SELECT COUNT(*) as c FROM posts WHERE deleted = 0');
+    const mediaCount = await db.get('SELECT COUNT(*) as c FROM posts WHERE media_url IS NOT NULL AND deleted = 0');
+    const mediaToday = await db.get(`SELECT COUNT(*) as c FROM posts WHERE media_url IS NOT NULL AND deleted = 0 AND created_at > NOW() - INTERVAL '24 hours'`);
+
+    // Примерный размер медиа в БД (base64 ~ 1.37x реального)
+    const mediaSizeRow = await db.get(`SELECT COALESCE(SUM(LENGTH(media_url)), 0) as total FROM posts WHERE media_url IS NOT NULL AND deleted = 0`);
+    const mediaSizeMB = (parseInt(mediaSizeRow.total) / 1024 / 1024).toFixed(1);
+
+    // Топ пользователей по медиа
+    const topMedia = await db.all(`
+      SELECT u.username, u.display_name, COUNT(*) as cnt
+      FROM posts p JOIN users u ON u.id = p.author_id
+      WHERE p.media_url IS NOT NULL AND p.deleted = 0
+      GROUP BY u.id, u.username, u.display_name
+      ORDER BY cnt DESC LIMIT 10
+    `);
+
+    res.json({
+      userCount: parseInt(userCount.c),
+      postCount: parseInt(postCount.c),
+      mediaCount: parseInt(mediaCount.c),
+      mediaToday: parseInt(mediaToday.c),
+      mediaSizeMB,
+      topMedia
+    });
+  } catch (e) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
 module.exports = router;

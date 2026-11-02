@@ -88,3 +88,6 @@ node server/index.js
 - Persistent disk смонтировать в `/data` чтобы БД не терялась при рестарте
 - Переменная окружения: `JWT_SECRET=...` (обязательно сменить)
 - `better-sqlite3` не используется (нет Python/C++ на сборке) — используется `sql.js` (pure JS)
+
+## GitHub репозиторий
+Название репозитория на GitHub: **itsmi**

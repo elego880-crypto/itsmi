@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { db } = require('../db');
 const { requireAuth } = require('../middleware/auth');
-const upload = require('../middleware/upload');
+const { upload, compressToBase64 } = require('../middleware/upload');
 const { createNotif } = require('../notif');
 const xss = require('xss');
 const fs = require('fs');
@@ -78,9 +78,11 @@ router.patch('/me', requireAuth, upload.single('avatar'), async (req, res) => {
     if (displayName) updates.display_name = displayName;
     if (bio !== undefined) updates.bio = bio;
     if (req.file) {
-      const buf = fs.readFileSync(req.file.path);
-      updates.avatar_url = `data:${req.file.mimetype};base64,${buf.toString('base64')}`;
-      fs.unlinkSync(req.file.path);
+      try {
+        updates.avatar_url = await compressToBase64(req.file.path, req.file.mimetype);
+      } finally {
+        if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+      }
     }
 
     if (Object.keys(updates).length === 0) return res.status(400).json({ error: 'Нечего обновлять' });

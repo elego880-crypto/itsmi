@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { db } = require('../db');
 const { requireAuth } = require('../middleware/auth');
-const upload = require('../middleware/upload');
+const { upload, compressToBase64 } = require('../middleware/upload');
 const { broadcast } = require('../ws');
 const xss = require('xss');
 const fs = require('fs');
@@ -35,9 +35,11 @@ router.post('/', requireAuth, upload.single('avatar'), async (req, res) => {
 
     let avatarUrl = null;
     if (req.file) {
-      const buf = fs.readFileSync(req.file.path);
-      avatarUrl = `data:${req.file.mimetype};base64,${buf.toString('base64')}`;
-      fs.unlinkSync(req.file.path);
+      try {
+        avatarUrl = await compressToBase64(req.file.path, req.file.mimetype);
+      } finally {
+        if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+      }
     }
 
     const result = await db.run(
@@ -106,9 +108,11 @@ router.post('/:id/posts', requireAuth, upload.single('media'), async (req, res) 
 
     let mediaUrl = null;
     if (req.file) {
-      const buf = fs.readFileSync(req.file.path);
-      mediaUrl = `data:${req.file.mimetype};base64,${buf.toString('base64')}`;
-      fs.unlinkSync(req.file.path);
+      try {
+        mediaUrl = await compressToBase64(req.file.path, req.file.mimetype);
+      } finally {
+        if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+      }
     }
 
     const result = await db.run(

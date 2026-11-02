@@ -20,6 +20,7 @@ const AdminPage = (() => {
         <button class="tab-btn" data-tab="posts">Посты</button>
         <button class="tab-btn" data-tab="reports">Жалобы</button>
         <button class="tab-btn" data-tab="verification">Верификация</button>
+        <button class="tab-btn" data-tab="storage">База данных</button>
       </div>
       <div id="admin-content"><div class="spinner"></div></div>
       </div>
@@ -46,6 +47,7 @@ const AdminPage = (() => {
     else if (tab === 'posts') await renderPosts(container);
     else if (tab === 'reports') await renderReports(container);
     else if (tab === 'verification') await renderVerification(container);
+    else if (tab === 'storage') await renderStorage(container);
   }
 
   async function renderUsers(container) {
@@ -347,6 +349,62 @@ const AdminPage = (() => {
         });
       });
     } catch(e) { container.innerHTML = '<div class="empty-state">Ошибка</div>'; }
+  }
+
+  async function renderStorage(container) {
+    try {
+      const s = await API.get('/admin/stats');
+      const usedPct = Math.min(100, (s.mediaSizeMB / 230 * 100)).toFixed(1); // 230MB лимит free tier
+
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="post-card">
+            <div class="section-title" style="margin-bottom:16px">Использование базы данных</div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px">
+              <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:16px">
+                <div style="font-size:24px;font-weight:800">${s.userCount}</div>
+                <div style="color:var(--text3);font-size:13px;margin-top:4px">пользователей</div>
+              </div>
+              <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:16px">
+                <div style="font-size:24px;font-weight:800">${s.postCount}</div>
+                <div style="color:var(--text3);font-size:13px;margin-top:4px">постов</div>
+              </div>
+              <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:16px">
+                <div style="font-size:24px;font-weight:800">${s.mediaCount}</div>
+                <div style="color:var(--text3);font-size:13px;margin-top:4px">постов с картинками</div>
+              </div>
+              <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:16px">
+                <div style="font-size:24px;font-weight:800">${s.mediaToday}</div>
+                <div style="color:var(--text3);font-size:13px;margin-top:4px">картинок сегодня</div>
+              </div>
+            </div>
+            <div style="margin-bottom:8px;display:flex;justify-content:space-between;font-size:14px">
+              <span>Медиа в БД</span>
+              <span style="font-weight:700">${s.mediaSizeMB} MB / 230 MB</span>
+            </div>
+            <div style="background:var(--bg3);border-radius:99px;height:10px;overflow:hidden">
+              <div style="height:100%;border-radius:99px;width:${usedPct}%;background:${usedPct > 80 ? 'var(--danger)' : usedPct > 60 ? '#f0a500' : 'var(--accent)'}"></div>
+            </div>
+            <div style="color:var(--text3);font-size:12px;margin-top:6px">${usedPct}% использовано</div>
+          </div>
+
+          <div class="post-card">
+            <div class="section-title" style="margin-bottom:14px">Топ по загрузке картинок</div>
+            <table class="admin-table">
+              <thead><tr><th>Пользователь</th><th>Картинок</th></tr></thead>
+              <tbody>
+                ${s.topMedia.map(u => `
+                  <tr>
+                    <td>@${u.username}</td>
+                    <td><span class="pill">${u.cnt}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    } catch(e) { container.innerHTML = '<div class="empty-state">Ошибка загрузки</div>'; }
   }
 
   return { render };
