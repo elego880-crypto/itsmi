@@ -13,7 +13,7 @@ async function checkMediaLimit(userId) {
     WHERE author_id = $1 AND media_url IS NOT NULL AND deleted = 0
     AND created_at > NOW() - INTERVAL '24 hours'
   `, [userId]);
-  return parseInt(row.c) < 3;
+  return parseInt(row.c) < 5;
 }
 
 async function enrichPost(post, currentUserId) {
@@ -73,7 +73,7 @@ router.post('/', requireAuth, upload.single('media'), async (req, res) => {
       const allowed = await checkMediaLimit(req.user.id);
       if (!allowed) {
         fs.unlinkSync(req.file.path);
-        return res.status(429).json({ error: 'Лимит изображений: максимум 3 в день' });
+        return res.status(429).json({ error: 'Лимит изображений: максимум 5 в день' });
       }
       try {
         mediaUrl = await compressToBase64(req.file.path, req.file.mimetype);
