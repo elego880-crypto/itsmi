@@ -26,6 +26,14 @@ router.post('/register', async (req, res) => {
     );
 
     const user = await db.get('SELECT id, username, display_name, bio, avatar_url, verified, role FROM users WHERE id = $1', [result.lastInsertRowid]);
+
+    // Автоподписка на админа
+    const adminUsername = process.env.ADMIN_USERNAME || 'Egor';
+    const admin = await db.get('SELECT id FROM users WHERE username = $1', [adminUsername]);
+    if (admin && admin.id !== result.lastInsertRowid) {
+      await db.run('INSERT INTO follows (follower_id, following_id) VALUES ($1, $2) ON CONFLICT DO NOTHING', [result.lastInsertRowid, admin.id]);
+    }
+
     const access = signAccess(user.id);
     const refresh = await signRefresh(user.id);
 

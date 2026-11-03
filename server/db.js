@@ -174,6 +174,17 @@ async function init() {
       );
     }
 
+    // Auto-follow: все пользователи подписаны на админа
+    const adminUser = await client.query('SELECT id FROM users WHERE username = $1', [adminUsername]);
+    if (adminUser.rows.length) {
+      const adminId = adminUser.rows[0].id;
+      await client.query(`
+        INSERT INTO follows (follower_id, following_id)
+        SELECT id, $1 FROM users WHERE id != $1
+        ON CONFLICT DO NOTHING
+      `, [adminId]);
+    }
+
     await client.query('COMMIT');
     console.log('[DB] PostgreSQL ready');
   } catch (err) {

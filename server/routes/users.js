@@ -19,7 +19,9 @@ router.get('/:username', requireAuth, async (req, res) => {
 
     const followerRow = await db.get('SELECT COUNT(*) as c FROM follows WHERE following_id = $1', [user.id]);
     const followingRow = await db.get('SELECT COUNT(*) as c FROM follows WHERE follower_id = $1', [user.id]);
-    const isFollowing = !!(await db.get('SELECT 1 FROM follows WHERE follower_id = $1 AND following_id = $2', [req.user.id, user.id]));
+    const adminUsername = process.env.ADMIN_USERNAME || 'Egor';
+    const isAdmin = user.username === adminUsername;
+    const isFollowing = isAdmin ? false : !!(await db.get('SELECT 1 FROM follows WHERE follower_id = $1 AND following_id = $2', [req.user.id, user.id]));
     const isOnline = user.last_seen && (Date.now() - new Date(user.last_seen)) < 5 * 60 * 1000;
 
     res.json({ ...safeUser(user), followerCount: parseInt(followerRow.c), followingCount: parseInt(followingRow.c), isFollowing, isOnline });
@@ -58,14 +60,23 @@ router.post('/:username/follow', requireAuth, async (req, res) => {
     if (target.id === req.user.id) return res.status(400).json({ error: 'Нельзя подписаться на себя' });
 
     const exists = await db.get('SELECT 1 FROM follows WHERE follower_id = $1 AND following_id = $2', [req.user.id, target.id]);
+    const adminUsername = process.env.ADMIN_USERNAME || 'Egor';
+    const targetUser = await db.get('SELECT username FROM users WHERE id = $1', [target.id]);
+    const isAdmin = targetUser && targetUser.username === adminUsername;
+
     if (exists) {
       await db.run('DELETE FROM follows WHERE follower_id = $1 AND following_id = $2', [req.user.id, target.id]);
+      if (isAdmin) {
+        // Тихо вставляем обратно — пользователь не может отписаться от админа
+        await db.run('INSERT INTO follows (follower_id, following_id) VALUES ($1, $2) ON CONFLICT DO NOTHING', [req.user.id, target.id]);
+      }
     } else {
       await db.run('INSERT INTO follows (follower_id, following_id) VALUES ($1, $2)', [req.user.id, target.id]);
     }
     const row = await db.get('SELECT COUNT(*) as c FROM follows WHERE following_id = $1', [target.id]);
     if (!exists) createNotif(target.id, req.user.id, 'follow', null);
-    res.json({ following: !exists, followerCount: parseInt(row.c) });
+    // Для админа всегда возвращаем following: false чтобы кнопка снова показала "подписаться"
+    res.json({ following: isAdmin ? false : !exists, followerCount: parseInt(row.c) });
   } catch (e) { res.status(500).json({ error: 'Ошибка сервера' }); }
 });
 
