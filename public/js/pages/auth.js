@@ -3,7 +3,7 @@ const AuthPage = (() => {
     document.getElementById('page-auth').innerHTML = `
       <div style="display:flex;flex-direction:column;align-items:center">
       <div class="auth-card slide-up">
-        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" style="height:56px;width:auto" /></div>
+        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" style="height:auto;width:100%;max-width:220px" /></div>
         <div class="auth-title">Войти</div>
         <form id="login-form">
           <div class="form-group">
@@ -56,7 +56,7 @@ const AuthPage = (() => {
     document.getElementById('page-auth').innerHTML = `
       <div style="display:flex;flex-direction:column;align-items:center">
       <div class="auth-card slide-up">
-        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" style="height:66px;width:auto" /></div>
+        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" style="height:auto;width:100%;max-width:220px" /></div>
         <div class="auth-title">Регистрация</div>
         <form id="register-form">
           <div class="form-group">
