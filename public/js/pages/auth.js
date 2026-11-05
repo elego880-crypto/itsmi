@@ -3,7 +3,7 @@ const AuthPage = (() => {
     document.getElementById('page-auth').innerHTML = `
       <div style="display:flex;flex-direction:column;align-items:center">
       <div class="auth-card slide-up">
-        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" style="height:auto;width:100%;max-width:220px" /></div>
+        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" id="auth-logo-img" style="height:auto;width:100%;max-width:220px" /></div>
         <div class="auth-title">Войти</div>
         <form id="login-form">
           <div class="form-group">
@@ -27,6 +27,7 @@ const AuthPage = (() => {
       e.preventDefault();
       renderRegister();
     });
+    updateLogo();
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -56,7 +57,7 @@ const AuthPage = (() => {
     document.getElementById('page-auth').innerHTML = `
       <div style="display:flex;flex-direction:column;align-items:center">
       <div class="auth-card slide-up">
-        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" style="height:auto;width:100%;max-width:220px" /></div>
+        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" id="auth-logo-img" style="height:auto;width:100%;max-width:220px" /></div>
         <div class="auth-title">Регистрация</div>
         <form id="register-form">
           <div class="form-group">
@@ -90,6 +91,7 @@ const AuthPage = (() => {
       e.preventDefault();
       renderLogin();
     });
+    updateLogo();
 
     document.getElementById('reg-terms-link').addEventListener('click', (e) => {
       e.preventDefault();
@@ -135,5 +137,12 @@ const AuthPage = (() => {
     });
   }
 
-  return { renderLogin, renderRegister };
+  function updateLogo() {
+    const img = document.getElementById('auth-logo-img');
+    if (!img) return;
+    const theme = document.documentElement.getAttribute('data-theme') || localStorage.getItem('itsmi_theme') || 'dark';
+    img.src = theme === 'light' ? '/assets/logo_light.png' : '/assets/logo.png';
+  }
+
+  return { renderLogin, renderRegister, updateLogo };
 })();
