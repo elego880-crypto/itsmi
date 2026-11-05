@@ -203,21 +203,7 @@ const App = (() => {
       });
     });
 
-    const authorLink = document.getElementById('footer-author');
-    if (authorLink) {
-      authorLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        openModal(`
-          <div style="text-align:center;padding:8px 0">
-            <div style="font-size:22px;font-weight:800;margin-bottom:8px">Melnik Egor</div>
-            <div style="color:var(--text3);font-size:14px;margin-bottom:20px">@Egor</div>
-            <div style="color:var(--text2);font-size:15px;line-height:1.7">
-              ИТСМИ - моя идея, моя платформа. @Egor
-            </div>
-          </div>
-        `);
-      });
-    }
+
   }
 
   function updateNotifBadge(count) {
