@@ -71,7 +71,7 @@ const SettingsPage = (() => {
         <div class="settings-row">
           <div>
             <div class="settings-row-label">Версия</div>
-            <div class="settings-row-desc">ИТСМИ 1.0.0</div>
+            <div class="settings-row-desc">ИТСМИ 1.3.0</div>
           </div>
         </div>
       </div>
