@@ -11,7 +11,7 @@ async function enrichChannelPost(post, currentUserId) {
   const likeRow = await db.get('SELECT COUNT(*) as c FROM post_likes WHERE post_id = $1', [post.id]);
   const commentRow = await db.get('SELECT COUNT(*) as c FROM comments WHERE post_id = $1 AND deleted = 0', [post.id]);
   const liked = currentUserId ? !!(await db.get('SELECT 1 FROM post_likes WHERE post_id = $1 AND user_id = $2', [post.id, currentUserId])) : false;
-  return { ...post, author, likeCount: parseInt(likeRow.c), commentCount: parseInt(commentRow.c), liked };
+  return { ...post, author, likeCount: parseInt(likeRow.c) + (post.fake_likes || 0), commentCount: parseInt(commentRow.c), liked };
 }
 
 router.get('/', requireAuth, async (req, res) => {

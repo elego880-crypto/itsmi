@@ -234,7 +234,10 @@ const AdminPage = (() => {
                   </td>
                   <td style="color:var(--text3);font-size:13px;white-space:nowrap">${formatDate(p.created_at)}</td>
                   <td>
-                    <button class="btn btn-danger btn-sm" data-delete-admin-post="${p.id}">Удалить</button>
+                    <div class="user-row-actions">
+                      <button class="btn btn-danger btn-sm" data-delete-admin-post="${p.id}">Удалить</button>
+                      <button class="btn btn-ghost btn-sm" data-boost-post="${p.id}">Накрутить ❤️</button>
+                    </div>
                   </td>
                 </tr>
               `).join('')}
@@ -252,6 +255,20 @@ const AdminPage = (() => {
             const row = container.querySelector(`[data-post-row="${id}"]`);
             if (row) row.remove();
             toast('Пост удалён', 'success');
+          } catch (e) { toast(e.message, 'error'); }
+        });
+      });
+
+      container.querySelectorAll('[data-boost-post]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.boostPost;
+          const val = prompt('Установить количество накрученных лайков:');
+          if (val === null) return;
+          const count = parseInt(val);
+          if (isNaN(count) || count < 0) return toast('Введи число >= 0', 'error');
+          try {
+            const res = await API.post(`/admin/posts/${id}/boost-likes`, { count });
+            toast(`Лайков теперь: ${res.total}`, 'success');
           } catch (e) { toast(e.message, 'error'); }
         });
       });

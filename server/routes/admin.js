@@ -117,4 +117,19 @@ router.get('/stats', requireAdmin, async (req, res) => {
   } catch (e) { res.status(500).json({ error: 'Ошибка сервера' }); }
 });
 
+// POST /api/admin/posts/:id/boost-likes
+router.post('/posts/:id/boost-likes', requireAdmin, async (req, res) => {
+  try {
+    const count = parseInt(req.body.count);
+    if (isNaN(count) || count < 0) return res.status(400).json({ error: 'Неверное значение' });
+    const post = await db.get('SELECT id FROM posts WHERE id = $1 AND deleted = 0', [req.params.id]);
+    if (!post) return res.status(404).json({ error: 'Пост не найден' });
+    await db.run('UPDATE posts SET fake_likes = $1 WHERE id = $2', [count, post.id]);
+    const row = await db.get('SELECT COUNT(*) as c FROM post_likes WHERE post_id = $1', [post.id]);
+    const total = parseInt(row.c) + count;
+    broadcast('like_post', { postId: post.id, count: total });
+    res.json({ ok: true, total });
+  } catch (e) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
 module.exports = router;

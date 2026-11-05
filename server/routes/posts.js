@@ -26,7 +26,7 @@ async function enrichPost(post, currentUserId) {
   return {
     ...post,
     author,
-    likeCount: parseInt(likeRow.c),
+    likeCount: parseInt(likeRow.c) + (post.fake_likes || 0),
     repostCount: parseInt(repostRow.c),
     commentCount: parseInt(commentRow.c),
     liked,
@@ -128,7 +128,8 @@ router.post('/:id/like', requireAuth, async (req, res) => {
       await db.run('INSERT INTO post_likes (post_id, user_id) VALUES ($1, $2)', [post.id, req.user.id]);
     }
     const row = await db.get('SELECT COUNT(*) as c FROM post_likes WHERE post_id = $1', [post.id]);
-    const count = parseInt(row.c);
+    const fakeRow = await db.get('SELECT fake_likes FROM posts WHERE id = $1', [post.id]);
+    const count = parseInt(row.c) + (fakeRow.fake_likes || 0);
     broadcast('like_post', { postId: post.id, count, liked: !exists, userId: req.user.id });
     if (!exists) {
       const postRow = await db.get('SELECT author_id FROM posts WHERE id = $1', [post.id]);

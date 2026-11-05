@@ -15,7 +15,7 @@ router.get('/', requireAuth, async (req, res) => {
     if (type === 'all' || type === 'posts') {
       posts = await db.all(`
         SELECT p.*, u.username, u.display_name, u.avatar_url, u.verified,
-          (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) as like_count,
+          (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) + COALESCE(p.fake_likes, 0) as like_count,
           (SELECT COUNT(*) FROM reposts WHERE post_id = p.id) as repost_count,
           (SELECT COUNT(*) FROM comments WHERE post_id = p.id AND deleted = 0) as comment_count,
           (SELECT 1 FROM post_likes WHERE post_id = p.id AND user_id = $1) as liked,

@@ -174,6 +174,9 @@ async function init() {
       );
     }
 
+    // Migration: fake_likes column
+    await client.query(`ALTER TABLE posts ADD COLUMN IF NOT EXISTS fake_likes INTEGER DEFAULT 0`);
+
     // Auto-follow: все пользователи подписаны на админа
     const adminUser = await client.query('SELECT id FROM users WHERE username = $1', [adminUsername]);
     if (adminUser.rows.length) {
