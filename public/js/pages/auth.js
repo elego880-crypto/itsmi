@@ -49,6 +49,9 @@ const AuthPage = (() => {
       localStorage.setItem('itsmi_theme', newTheme);
       renderLogin();
     });
+    document.getElementById('auth-footer-privacy')?.addEventListener('click', (e) => { e.preventDefault(); SettingsPage.showLegal('privacy'); });
+    document.getElementById('auth-footer-cookies')?.addEventListener('click', (e) => { e.preventDefault(); SettingsPage.showLegal('cookies'); });
+    document.getElementById('auth-footer-terms')?.addEventListener('click', (e) => { e.preventDefault(); SettingsPage.showLegal('terms'); });
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -127,6 +130,9 @@ const AuthPage = (() => {
       localStorage.setItem('itsmi_theme', newTheme);
       renderRegister();
     });
+    document.getElementById('auth-footer-privacy')?.addEventListener('click', (e) => { e.preventDefault(); SettingsPage.showLegal('privacy'); });
+    document.getElementById('auth-footer-cookies')?.addEventListener('click', (e) => { e.preventDefault(); SettingsPage.showLegal('cookies'); });
+    document.getElementById('auth-footer-terms')?.addEventListener('click', (e) => { e.preventDefault(); SettingsPage.showLegal('terms'); });
 
     document.getElementById('reg-terms-link').addEventListener('click', (e) => {
       e.preventDefault();
