@@ -101,7 +101,7 @@ textarea { resize: none; min-height: 88px; }
   font-size: 22px;
   font-weight: 900;
   letter-spacing: -0.5px;
-  padding: 4px 12px 24px;
+  padding: 4px 0 24px 4px;
   user-select: none;
   -webkit-user-select: none;
 }
