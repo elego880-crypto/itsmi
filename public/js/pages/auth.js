@@ -11,7 +11,7 @@ const AuthPage = (() => {
       <button id="auth-theme-btn" style="position:fixed;top:16px;right:16px;background:var(--bg2);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2)">${themeSVG()}</button>
       <div style="display:flex;flex-direction:column;align-items:center">
       <div class="auth-card slide-up">
-        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" id="auth-logo-img" style="height:auto;width:100%;max-width:220px" /></div>
+        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" id="auth-logo-img" style="height:auto;width:100%;max-width:220px;display:block;margin:0 auto" /></div>
         <div class="auth-title">Войти</div>
         <form id="login-form">
           <div class="form-group">
@@ -73,7 +73,7 @@ const AuthPage = (() => {
       <button id="auth-theme-btn" style="position:fixed;top:16px;right:16px;background:var(--bg2);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2)">${themeSVG()}</button>
       <div style="display:flex;flex-direction:column;align-items:center">
       <div class="auth-card slide-up">
-        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" id="auth-logo-img" style="height:auto;width:100%;max-width:220px" /></div>
+        <div class="auth-logo"><img src="/assets/logo.png" alt="ИТСМИ" id="auth-logo-img" style="height:auto;width:100%;max-width:220px;display:block;margin:0 auto" /></div>
         <div class="auth-title">Регистрация</div>
         <form id="register-form">
           <div class="form-group">
