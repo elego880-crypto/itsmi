@@ -8,6 +8,8 @@ const App = (() => {
   async function init() {
     const theme = localStorage.getItem('itsmi_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', theme);
+    const logoImg = document.getElementById('sidebar-logo-img');
+    if (logoImg) logoImg.src = theme === 'light' ? '/assets/logo_light.png' : '/assets/logo.png';
 
     const { access } = API.getTokens();
 

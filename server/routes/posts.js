@@ -103,6 +103,25 @@ router.get('/:id', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: 'Ошибка сервера' }); }
 });
 
+// PATCH /api/posts/:id
+router.patch('/:id', requireAuth, async (req, res) => {
+  try {
+    const post = await db.get('SELECT * FROM posts WHERE id = $1 AND deleted = 0', [req.params.id]);
+    if (!post) return res.status(404).json({ error: 'Пост не найден' });
+    if (post.author_id !== req.user.id) return res.status(403).json({ error: 'Нет прав' });
+
+    const text = xss(String(req.body.text || '').trim());
+    if (!text) return res.status(400).json({ error: 'Текст не может быть пустым' });
+    if (text.length > 2000) return res.status(400).json({ error: 'Пост максимум 2000 символов' });
+
+    await db.run('UPDATE posts SET text = $1 WHERE id = $2', [text, post.id]);
+    const updated = await db.get('SELECT * FROM posts WHERE id = $1', [post.id]);
+    const enriched = await enrichPost(updated, req.user.id);
+    broadcast('edit_post', { postId: post.id, text: enriched.text });
+    res.json(enriched);
+  } catch (e) { res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
 // DELETE /api/posts/:id
 router.delete('/:id', requireAuth, async (req, res) => {
   try {

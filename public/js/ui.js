@@ -90,9 +90,16 @@ function renderPost(post, currentUser, opts = {}) {
         </div>
         <span class="post-time">${formatDate(post.created_at)}</span>
         ${canDelete ? `
-          <button class="action-btn-delete" data-delete-post="${post.id}" title="Удалить">
-            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>
+          <div style="display:flex;gap:4px">
+            ${isOwner ? `
+              <button class="action-btn-delete" data-edit-post="${post.id}" title="Редактировать" style="color:var(--text3)">
+                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+            ` : ''}
+            <button class="action-btn-delete" data-delete-post="${post.id}" title="Удалить">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </div>
         ` : `
           <button class="action-btn-delete" data-report-post="${post.id}" title="Пожаловаться" style="opacity:0">
             <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -187,6 +194,7 @@ function bindPostActions(container, currentUser) {
     const commentsBtn = e.target.closest('[data-comments-post]');
     const repostBtn = e.target.closest('[data-repost-post]');
     const deleteBtn = e.target.closest('[data-delete-post]');
+    const editBtn = e.target.closest('[data-edit-post]');
     const submitCommentBtn = e.target.closest('[data-submit-comment]');
     const likeCommentBtn = e.target.closest('[data-like-comment]');
     const deleteCommentBtn = e.target.closest('[data-delete-comment]');
@@ -270,6 +278,35 @@ function bindPostActions(container, currentUser) {
         const card = container.querySelector(`[data-post-id="${postId}"]`);
         if (card) card.remove();
       } catch (e) { toast(e.message, 'error'); }
+      return;
+    }
+
+    if (editBtn) {
+      const postId = editBtn.dataset.editPost;
+      const card = container.querySelector(`[data-post-id="${postId}"]`);
+      const textEl = card ? card.querySelector('.post-text') : null;
+      const currentText = textEl ? textEl.innerText : '';
+      openModal(`
+        <div class="auth-title" style="margin-bottom:20px">Редактировать пост</div>
+        <div class="form-group">
+          <textarea id="edit-post-text" style="background:var(--bg3);border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);width:100%;font-size:15px;outline:none;resize:vertical;min-height:100px;font-family:inherit;box-sizing:border-box" maxlength="2000">${escapeHTML(currentText)}</textarea>
+        </div>
+        <div class="form-error" id="edit-post-error"></div>
+        <button class="btn btn-primary btn-full" id="edit-post-submit" style="margin-top:8px">Сохранить</button>
+      `);
+      document.getElementById('edit-post-submit').addEventListener('click', async () => {
+        const text = document.getElementById('edit-post-text').value.trim();
+        if (!text) return;
+        try {
+          const res = await API.patch(`/posts/${postId}`, { text });
+          if (textEl) textEl.innerHTML = renderText(res.text || text);
+          closeModal();
+          toast('Пост обновлён', 'success');
+        } catch(e) {
+          document.getElementById('edit-post-error').textContent = e.message;
+          document.getElementById('edit-post-error').classList.add('show');
+        }
+      });
       return;
     }
 

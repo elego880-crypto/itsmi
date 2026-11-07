@@ -100,6 +100,8 @@ const SettingsPage = (() => {
       toggle.classList.toggle('on', !isDark);
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('itsmi_theme', newTheme);
+      const logoImg = document.getElementById('sidebar-logo-img');
+      if (logoImg) logoImg.src = newTheme === 'light' ? '/assets/logo_light.png' : '/assets/logo.png';
     });
 
     // Logout
