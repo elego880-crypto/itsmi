@@ -159,17 +159,17 @@ const App = (() => {
     const isMobile = window.innerWidth <= 768;
 
     if (isMobile && direction !== 0) {
-      const leaveClass = direction > 0 ? 'page-leaving-right' : 'page-leaving-left';
-      main.classList.add(leaveClass);
+      // Уходящая страница
+      main.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+      main.style.opacity = '0';
+      main.style.transform = direction > 0 ? 'translateX(-30px)' : 'translateX(30px)';
       await new Promise(r => setTimeout(r, 150));
-      main.classList.remove(leaveClass);
-      main.style.animation = 'none';
-      main.offsetHeight;
-      main.style.animation = '';
-      const enterClass = direction > 0 ? 'page-enter-right' : 'page-enter-left';
-      main.classList.add(enterClass);
-      const onEnd = () => { main.classList.remove(enterClass); main.removeEventListener('animationend', onEnd); };
-      main.addEventListener('animationend', onEnd);
+
+      // Сбрасываем без анимации
+      main.style.transition = 'none';
+      main.style.opacity = '0';
+      main.style.transform = direction > 0 ? 'translateX(30px)' : 'translateX(-30px)';
+      main.offsetHeight; // reflow
     } else {
       main.classList.add('page-leaving');
       await new Promise(r => setTimeout(r, 150));
@@ -209,6 +209,18 @@ const App = (() => {
         break;
       default:
         await FeedPage.render(currentUser);
+    }
+
+    // Появление новой страницы на мобиле
+    if (isMobile && direction !== 0) {
+      main.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      main.style.opacity = '1';
+      main.style.transform = 'translateX(0)';
+      setTimeout(() => {
+        main.style.transition = '';
+        main.style.transform = '';
+        main.style.opacity = '';
+      }, 220);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });

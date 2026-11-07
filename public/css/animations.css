@@ -92,29 +92,3 @@ html {
   from { opacity: 1; transform: translateX(0); }
   to   { opacity: 0; transform: translateX(40px); }
 }
-
-#main-content {
-  animation: pageEnter 0.2s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-#main-content.page-leaving {
-  animation: pageLeave 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  pointer-events: none;
-}
-
-@media (max-width: 768px) {
-  #main-content.page-enter-right {
-    animation: pageEnterRight 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-  #main-content.page-enter-left {
-    animation: pageEnterLeft 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-  #main-content.page-leaving-right {
-    animation: pageLeaveRight 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    pointer-events: none;
-  }
-  #main-content.page-leaving-left {
-    animation: pageLeaveLeft 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    pointer-events: none;
-  }
-}
