@@ -159,8 +159,12 @@ const App = (() => {
 
     // Fade out
     main.classList.add('page-leaving');
-    await new Promise(r => setTimeout(r, 160));
+    await new Promise(r => setTimeout(r, 150));
     main.classList.remove('page-leaving');
+    // Перезапускаем enter анимацию
+    main.style.animation = 'none';
+    main.offsetHeight; // reflow
+    main.style.animation = '';
 
     const mainPages = ['feed', 'channels', 'profile', 'settings', 'admin', 'search', 'notifications'];
     if (mainPages.includes(page)) setActiveNav(page);
