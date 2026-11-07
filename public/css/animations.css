@@ -104,10 +104,10 @@ html {
 
 @media (max-width: 768px) {
   #main-content.page-enter-right {
-    animation: pageEnterRight 0.22s cubic-bezier(0.4, 0, 0.2, 1) both;
+    animation: pageEnterRight 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
   #main-content.page-enter-left {
-    animation: pageEnterLeft 0.22s cubic-bezier(0.4, 0, 0.2, 1) both;
+    animation: pageEnterLeft 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
   #main-content.page-leaving-right {
     animation: pageLeaveRight 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;

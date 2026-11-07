@@ -168,7 +168,8 @@ const App = (() => {
       main.style.animation = '';
       const enterClass = direction > 0 ? 'page-enter-right' : 'page-enter-left';
       main.classList.add(enterClass);
-      setTimeout(() => main.classList.remove(enterClass), 250);
+      const onEnd = () => { main.classList.remove(enterClass); main.removeEventListener('animationend', onEnd); };
+      main.addEventListener('animationend', onEnd);
     } else {
       main.classList.add('page-leaving');
       await new Promise(r => setTimeout(r, 150));
