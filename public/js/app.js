@@ -151,20 +151,32 @@ const App = (() => {
     });
   }
 
-  async function navigateTo(page, opts = {}) {
+  async function navigateTo(page, opts = {}, direction = 0) {
     currentPage = page;
     currentOpts = opts;
 
     const main = document.getElementById('main-content');
+    const isMobile = window.innerWidth <= 768;
 
-    // Fade out
-    main.classList.add('page-leaving');
-    await new Promise(r => setTimeout(r, 150));
-    main.classList.remove('page-leaving');
-    // Перезапускаем enter анимацию
-    main.style.animation = 'none';
-    main.offsetHeight; // reflow
-    main.style.animation = '';
+    if (isMobile && direction !== 0) {
+      const leaveClass = direction > 0 ? 'page-leaving-right' : 'page-leaving-left';
+      main.classList.add(leaveClass);
+      await new Promise(r => setTimeout(r, 150));
+      main.classList.remove(leaveClass);
+      main.style.animation = 'none';
+      main.offsetHeight;
+      main.style.animation = '';
+      const enterClass = direction > 0 ? 'page-enter-right' : 'page-enter-left';
+      main.classList.add(enterClass);
+      setTimeout(() => main.classList.remove(enterClass), 250);
+    } else {
+      main.classList.add('page-leaving');
+      await new Promise(r => setTimeout(r, 150));
+      main.classList.remove('page-leaving');
+      main.style.animation = 'none';
+      main.offsetHeight;
+      main.style.animation = '';
+    }
 
     const mainPages = ['feed', 'channels', 'profile', 'settings', 'admin', 'search', 'notifications'];
     if (mainPages.includes(page)) setActiveNav(page);
@@ -262,9 +274,9 @@ const App = (() => {
     if (idx === -1) return;
 
     if (dx < 0 && idx < pages.length - 1) {
-      App.navigateTo(pages[idx + 1]);
+      App.navigateTo(pages[idx + 1], {}, 1);
     } else if (dx > 0 && idx > 0) {
-      App.navigateTo(pages[idx - 1]);
+      App.navigateTo(pages[idx - 1], {}, -1);
     }
   }, { passive: true });
 })();
