@@ -29,7 +29,7 @@ const AuthPage = (() => {
       </div>
       <div style="margin-top:16px;font-size:12px;color:var(--text3)">powered by @Melnik Egor</div>
       </div>
-      <footer style="position:fixed;bottom:0;left:0;right:0;font-size:12px;color:var(--text3);display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:12px 16px;border-top:1px solid var(--border);background:var(--bg)">
+      <footer style="margin-top:32px;font-size:12px;color:var(--text3);display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:12px 16px;border-top:1px solid var(--border)">
         <span>ИТСМИ &copy; 2025-2026</span>
         <a href="#" id="auth-footer-privacy" style="color:var(--text3)">Конфиденциальность</a>
         <a href="#" id="auth-footer-cookies" style="color:var(--text3)">Cookies</a>
@@ -110,7 +110,7 @@ const AuthPage = (() => {
       </div>
       <div style="margin-top:16px;font-size:12px;color:var(--text3)">powered by @Melnik Egor</div>
       </div>
-      <footer style="position:fixed;bottom:0;left:0;right:0;font-size:12px;color:var(--text3);display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:12px 16px;border-top:1px solid var(--border);background:var(--bg)">
+      <footer style="margin-top:32px;font-size:12px;color:var(--text3);display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:12px 16px;border-top:1px solid var(--border)">
         <span>ИТСМИ &copy; 2025-2026</span>
         <a href="#" id="auth-footer-privacy" style="color:var(--text3)">Конфиденциальность</a>
         <a href="#" id="auth-footer-cookies" style="color:var(--text3)">Cookies</a>
