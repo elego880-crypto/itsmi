@@ -1,18 +1,33 @@
+Proprietary Software License
+
 Copyright (c) 2025-2026 Melnik Egor, Aethel Dev
 
-Все права защищены.
+All rights reserved.
 
-Данное программное обеспечение и его исходный код являются собственностью
-Melnik Egor и команды Aethel Dev.
+1. OWNERSHIP
+   This software and its source code are the exclusive property of Melnik Egor
+   and Aethel Dev. No ownership rights are transferred by making this repository
+   publicly visible.
 
-Копирование, распространение, изменение, публичное отображение, сублицензирование
-и любое иное использование кода — частичное или полное — без письменного разрешения
-правообладателя строго запрещено.
+2. RESTRICTIONS
+   You may NOT, without prior written permission from the copyright holder:
+   a) copy, reproduce or duplicate this software or any part of it;
+   b) distribute, publish or make available this software to any third party;
+   c) modify, adapt, translate or create derivative works based on this software;
+   d) use this software or any part of it in your own projects, products or services;
+   e) deploy, host or run this software for any purpose other than personal review;
+   f) sell, rent, lease or sublicense this software.
 
-Просмотр кода в данном репозитории не предоставляет никаких прав на его использование.
+3. PERMITTED USE
+   Viewing the source code in this repository for personal, non-commercial
+   educational purposes only. No other rights are granted.
 
-По вопросам сотрудничества и использования: https://t.me/elego880
+4. NO WARRANTY
+   This software is provided "as is", without warranty of any kind. The author
+   shall not be liable for any damages arising from unauthorized use.
 
-All rights reserved. Unauthorized copying, distribution, modification or use
-of this software, in whole or in part, is strictly prohibited without prior
-written permission from the copyright holder.
+5. CONTACT
+   For licensing inquiries and permissions: https://t.me/elego880
+
+Any use not expressly permitted above constitutes copyright infringement and
+may result in legal action.
