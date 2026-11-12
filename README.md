@@ -1,5 +1,9 @@
 <div align="center">
-  <img src="public/assets/logo.png" alt="ИТСМИ" width="260" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/assets/logo.png" />
+    <source media="(prefers-color-scheme: light)" srcset="public/assets/logo_light.png" />
+    <img src="public/assets/logo.png" alt="ИТСМИ" width="260" />
+  </picture>
   <br/><br/>
 
   <p><strong>Русскоязычная социальная сеть нового поколения</strong></p>
